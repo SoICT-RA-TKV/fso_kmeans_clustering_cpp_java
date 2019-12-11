@@ -285,7 +285,7 @@ public class Main {
 		int last = n;
 		while (first < last) {
 			int mid = (first + last) /2;
-			if (isCanSolve(mid,100)) last = mid;
+			if (isCanSolve(mid,200)) last = mid;
 			else
 				first = mid+1;
 		}

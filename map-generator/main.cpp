@@ -23,7 +23,7 @@ struct Cluster {
 	};
 } cluster[NMAX];
 
-double **prob, **dist;
+double **prob, **dist, **tmpp;
 
 struct ClusterMap {
 	int w, h;
@@ -34,30 +34,36 @@ struct ClusterMap {
 		cmap = (int **) malloc(h * sizeof(int *));
 		prob = (double **) malloc(h * sizeof(double *));
 		dist = (double **) malloc(h * sizeof(double *));
+		tmpp = (double **) malloc(h * sizeof(double *));
 		for (int i = 0; i < h; i++) {
 			cmap[i] = (int *) malloc (w * sizeof(int));
 			prob[i] = (double *) malloc (w * sizeof(double));
 			dist[i] = (double *) malloc (w * sizeof(double));
+			tmpp[i] = (double *) malloc(w * sizeof(double));
 		}
 	}
 	
 	void gen(Cluster *cluster, int n) {
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				prob[i][j] = 0;
-				dist[i][j] = 0;
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				prob[y][x] = 0;
+				dist[y][x] = 0;
+				tmpp[y][x] = 0;
 				for (int k = 0; k < n; k++) {
-					dist[i][j] += cluster[k].l2_norm(i, j) / cluster[k].r;
+					dist[y][x] += cluster[k].l2_norm(x, y);
 				}
 				for (int k = 0; k < n; k++) {
-					prob[i][j] += cluster[k].c * (cluster[k].l2_norm(i, j) / cluster[k].r) / dist[i][j];
+					tmpp[y][x] += dist[y][x] / cluster[k].l2_norm(x, y);
+				}
+				for (int k = 0; k < n; k++) {
+					prob[y][x] += cluster[k].c * (dist[y][x] / cluster[k].l2_norm(x, y)) / tmpp[y][x];
 				}
 				double p = frand(0, 1);
 //				cout << p << endl;
-				if (p < prob[i][j]) {
-					cmap[i][j] = 1;
+				if (p < prob[y][x]) {
+					cmap[y][x] = 1;
 				} else {
-					cmap[i][j] = 0;
+					cmap[y][x] = 0;
 				}
 			}
 		}
@@ -65,16 +71,16 @@ struct ClusterMap {
 	
 	void write() {
 		int cnt = 0;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				cnt += cmap[i][j];
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				cnt += cmap[y][x];
 			}
 		}
 		cout << cnt << endl;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				if (cmap[i][j] == 1) {
-					cout << i + frand(0, 1) << ' ' << j + frand(0, 1) << endl;
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				if (cmap[y][x] == 1) {
+					cout << x + frand(0, 1) << ' ' << y + frand(0, 1) << endl;
 				}
 			}
 		}
