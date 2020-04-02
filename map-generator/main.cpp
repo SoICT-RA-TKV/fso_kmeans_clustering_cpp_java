@@ -71,6 +71,7 @@ struct ClusterMap {
 	
 	void write() {
 		int cnt = 0;
+		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				cnt += cmap[y][x];
@@ -91,7 +92,7 @@ int n;
 
 int main(int argc, char** argv) {
 	freopen("config.txt", "r", stdin);
-	freopen("map.txt", "w", stdout);
+	freopen("maps.txt", "w", stdout);
 	
 	cin >> n;
 //	cout << n << endl;
